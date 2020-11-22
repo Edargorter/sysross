@@ -1,0 +1,19 @@
+### Fix popping sound ###
+
+https://superuser.com/questions/1493096/linux-ubuntu-speakers-popping-every-few-seconds
+
+The operation system's default behavior is to save power by turning off the Audio Adapter after 10 seconds. This power-save feature is causing the popping, and can be disabled.
+
+In Terminal type sudo nano /sys/module/snd_hda_intel/parameters/power_save and change the value from 1 to 0.
+
+Then type sudo nano /sys/module/snd_hda_intel/parameters/power_save_controller and change the value from Y to N.
+
+On my system, this solved the audio popping problem immediately. However on reboot, the problem came back and I found these values had been reset. To keep these values persistent, I had to add a line of code to /etc/modprobe.d/alsa-base.conf I added this after the last line of code in the file, options snd-hda-intel power_save=0 power_save_controller=N
+
+Save the file, and you're good to go!
+
+Much of my information came from this video : https://www.youtube.com/watch?v=Pdmy8dMWitg
+
+I had to piece together the "persistence after reboot" part, and my setting did reset even though I do not have TLP installed. Note that the video claims otherwise.
+
+I was quite frustrated with Ubuntu until I figured this out. I hope this helps many people solve their audio issues!
