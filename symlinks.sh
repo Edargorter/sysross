@@ -5,6 +5,9 @@
 sudo ln -fs ~/sysross/hidden_files/.tmux.conf ~/.tmux.conf
 sudo ln -fs ~/sysross/hidden_files/.vimrc ~/.vimrc
 sudo ln -fs ~/sysross/hidden_files/.bashrc ~/.bashrc
+sudo ln -fs ~/sysross/hidden_files/.tmux.conf /root/.tmux.conf
+sudo ln -fs ~/sysross/hidden_files/.vimrc /root/.vimrc
+sudo ln -fs ~/sysross/hidden_files/.bashrc /root/.bashrc
 
 #Programs 
 #sudo ln -fs ~/sysross/Progs/little_endian.py /usr/bin/len
