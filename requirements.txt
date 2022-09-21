@@ -12,11 +12,9 @@ python-pip
 python3-pip
 virtualenv
 nmap
-cowsay
 cmatrix
 nc
 telnet
-openvpn
 openssh
 ssh
 net-tools

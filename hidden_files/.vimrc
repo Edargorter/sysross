@@ -13,3 +13,8 @@ set hlsearch
 set ruler
 set ai
 set paste
+set autoindent
+nmap j gj
+nmap k gk
+vmap j gj
+vmap k gk

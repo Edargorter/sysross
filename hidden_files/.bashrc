@@ -117,6 +117,8 @@ if [ $(which nautilus) ]; then
     FM="nautilus"
 elif [ $(which thunar) ]; then
     FM="thunar"
+elif [ $(which xdg-open) ]; then
+	FM="open"
 elif [ $(uname) == Darwin ]; then
 	FM="open"
 else
@@ -197,3 +199,5 @@ function progress_bar {
 
 #Run system-specific configurations
 #~/.bash_profile
+
+alias python=python3
