@@ -19,3 +19,7 @@ nmap j gj
 nmap k gk
 vmap j gj
 vmap k gk
+nmap $ g$
+vmap $ g$
+nmap 0 g0
+vmap 0 g0
