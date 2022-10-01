@@ -36,8 +36,5 @@ else
 	done
 fi
 
-#Make ips.txt file in ~
-touch ~/ips.txt
-
 #Remove unused dependencies etc.
 sudo apt autoremove && sudo apt autoclean
