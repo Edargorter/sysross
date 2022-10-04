@@ -15,3 +15,4 @@ sudo ln -fs ~/sysross/hidden_files/.bashrc /root/.bashrc
 #sudo ln -fs ~/sysross/Progs/ckp.sh /usr/bin/ckp
 #sudo ln -fs ~/sysross/Progs/rmcom.py /usr/bin/rmcom
 #sudo ln -fs ~/sysross/Progs/rstr.sh /usr/bin/rstr
+sudo ln -fs ~/sysross/save.sh /usr/bin/save

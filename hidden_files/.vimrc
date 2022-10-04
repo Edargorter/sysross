@@ -23,4 +23,3 @@ nmap $ g$
 vmap $ g$
 nmap 0 g0
 vmap 0 g0
-nmap V 0v$
