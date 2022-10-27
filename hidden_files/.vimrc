@@ -1,6 +1,7 @@
 syntax on
 set title
 set number
+set backspace=indent,eol,start
 filetype plugin indent on
 set tabstop=4
 set softtabstop=4
