@@ -1,0 +1,11 @@
+Screensharing Troubleshooting on Ubuntu 22.04
+
+1. Run to disable Wayland
+
+sudo vim /etc/gdm3/custom.conf
+Remove comment for line "WaylandEnable=false"
+sudo systemctl restart gdm3
+
+2. Add Chrome flag 
+
+In browser: chrome://flags/#enable-webrtc-pipewire-capturer

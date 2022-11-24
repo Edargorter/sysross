@@ -22,9 +22,9 @@ done
 sec_pkgs=$(cat $sec_require)
 echo ${sec_pkgs[0]}
 
-printf "Install security requirements? [Y]: "
-read str
-echo ""
+#printf "Install security requirements? [Y]: "
+#read str
+#echo ""
 
 if [[ $str == "n" && $str == "N" ]]; then
 	echo "Packages will not be installed."
@@ -37,4 +37,4 @@ else
 fi
 
 #Remove unused dependencies etc.
-sudo apt autoremove && sudo apt autoclean
+sudo apt autoremove -y && sudo apt autoclean -y
