@@ -205,8 +205,18 @@ alias python=python3
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-# GoLang
-export GOROOT=$HOME/.go
-export PATH=$PATH:$GOROOT/bin
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'micromamba shell init' !!
+export MAMBA_EXE='/home/zdbowditch/projects/bin/micromamba';
+export MAMBA_ROOT_PREFIX='/home/zdbowditch/micromamba';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
+fi
+unset __mamba_setup
+alias conda=micromamba
+# <<< mamba initialize <<<
+export PATH=$PATH:/usr/local/go/bin
