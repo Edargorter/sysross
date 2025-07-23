@@ -1,0 +1,14 @@
+[Unit]
+Description=Key frequency logger
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/keylogger
+Restart=always
+RestartSec=5
+User=zdbowditch
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
