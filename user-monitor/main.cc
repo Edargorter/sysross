@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include <ctime>
 #include <fstream>
 #include <cstdint>
@@ -22,6 +23,44 @@ string get_time()
 	time_t result = time(nullptr);
 	string unix_time = asctime(localtime(&result));
 	return unix_time;
+}
+
+void read_csv(vector<int>& occ, string filename)
+{
+	vector<pair<int, int>> data;
+    ifstream file(filename);
+
+    if (!file.is_open()) {
+        cerr << "Error: Cannot open file " << filename << "\n";
+        return;
+    }
+
+	int maxkey = 0;
+    string line;
+	getline(file, line);
+    while (getline(file, line)) {
+        pair<int, int> row;
+        stringstream ss(line);
+        string cell;
+
+        if (getline(ss, cell, ',')) {
+            row.first = stoi(cell);
+        }
+        if (getline(ss, cell)) {
+            row.second = stoi(cell);
+        }
+		maxkey = max(maxkey, row.first);
+
+        data.push_back(row);
+    }
+	occ.resize(maxkey + 1, 0);
+	cout << " Max key: " << maxkey << nl;
+	for(auto& p : data){
+		cout << p.first << " " << p.second << nl;
+		occ[p.first] = p.second;
+	}
+
+    file.close();
 }
 
 void dump_to_csv(vector<int>& occ, string filename)
@@ -48,14 +87,17 @@ void print_occ(vector<int>& occ)
 }
 
 int main() {
+
 	vector<int> occ;
-	string csv_filename = "keystrokes.csv";
+	string csv_filename = "data/keystrokes.csv";
+	read_csv(occ, csv_filename);
+
     struct libevdev *dev = NULL;
-	string usb_keyboard = "event7"; // DELL USB keyboard 
-	string embedded_keyboard = "event3"; // Embedded laptop keyboard 
+	// string keyboard = "event7"; // DELL USB keyboard 
+	string keyboard = "event3"; // Embedded laptop keyboard 
 	string input_path = "/dev/input/";
 
-    int fd = open((input_path + usb_keyboard).c_str(), O_RDONLY | O_NONBLOCK); // Change this to your keyboard device
+    int fd = open((input_path + keyboard).c_str(), O_RDONLY | O_NONBLOCK); // Change this to your keyboard device
     if (fd < 0) {
         perror("Failed to open device");
         return 1;
