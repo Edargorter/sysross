@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import unicodedata 
+from evdev import ecodes 
 
 # Read the CSV file
 df = pd.read_csv("data/keystrokes.csv")
@@ -12,6 +13,11 @@ def read_key_map(filename):
 key_map = read_key_map("formatted-keycodes.txt")
 
 def convert(key):
+    eckey = ecodes.KEY[key]
+    if eckey[:4] == "KEY_":
+        eckey = eckey[4:]
+    return eckey 
+        
     c = chr(key)
     if not c.isprintable():
         c = key_map.get(key, "ukn")
@@ -24,7 +30,7 @@ def gen_text():
     # Sort descending by count
     df = df.sort_values("count", ascending=False)
     # df.to_csv("test.csv")
-    with open("symbol-stats.csv", 'w') as f:
+    with open("data/symbol-stats.csv", 'w') as f:
         for i in range(df.shape[0]):
             f.write(f'{df["char"].iloc[i]} {df["count"].iloc[i]}\n')
 

@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -10,13 +11,18 @@
 #include <ctime>
 #include <fstream>
 #include <cstdint>
+#include <mutex>
+#include <thread>
+#include <chrono>
 
-#define FLUSH_TICKS 1e2
-#define EVENT_INTERVAL 1e5
+#define FLUSH_TICKS 50
+#define EVENT_INTERVAL 50
 #define nl '\n'
 #define newline cout << nl;
 
 using namespace std;
+mutex mtx;
+vector<int> occ;
 
 string get_time()
 {
@@ -25,7 +31,7 @@ string get_time()
 	return unix_time;
 }
 
-void read_csv(vector<int>& occ, string filename)
+void read_csv(string filename)
 {
 	vector<pair<int, int>> data;
     ifstream file(filename);
@@ -63,7 +69,7 @@ void read_csv(vector<int>& occ, string filename)
     file.close();
 }
 
-void dump_to_csv(vector<int>& occ, string filename)
+void dump_to_csv(string& filename)
 {
 	ofstream f;
 	f.open(filename);
@@ -76,25 +82,61 @@ void dump_to_csv(vector<int>& occ, string filename)
 	f.close();
 }
 
-void print_occ(vector<int>& occ)
+void print_occ()
 {
 	for(int i = 0; i < occ.size(); i++){
-		if(occ[i] > 0){
+		if(occ[i] >= 0){
 			cout << i << ": " << occ[i] << " ";
 		}
 	}
 	cout << "\n";
 }
 
+void capture(struct libevdev* dev)
+{
+	struct input_event ev;
+    while (true) {
+        int rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+        if (rc == 0 && ev.type == EV_KEY) {
+            if (ev.value == 1) { // key press
+                // printf("Key %d pressed\n", ev.code);
+				cout << "ev code: " << ev.code << nl;
+				lock_guard<mutex> lock(mtx);
+				if(ev.code >= occ.size()){
+					occ.resize(ev.code + 1);
+				}
+				occ[ev.code]++;
+            }
+        }
+
+		this_thread::sleep_for(std::chrono::milliseconds(EVENT_INTERVAL));
+    }
+}
+
+void exporter(string filename)
+{
+    while (true) {
+        this_thread::sleep_for(chrono::seconds(5));
+        lock_guard<mutex> lock(mtx);
+		print_occ();
+        dump_to_csv(filename);
+    }
+}
+
 int main() {
 
-	vector<int> occ;
 	string csv_filename = "data/keystrokes.csv";
-	read_csv(occ, csv_filename);
+	read_csv(csv_filename);
+	cout << "Occ size: " << occ.size() << nl;
 
     struct libevdev *dev = NULL;
-	// string keyboard = "event7"; // DELL USB keyboard 
-	string keyboard = "event3"; // Embedded laptop keyboard 
+	// find the usb keyboard environment variable 
+
+	const char* keyboard = getenv("KEYBOARD");
+	if (keyboard == NULL){
+		cout << "USB Keyboard not found." << nl;
+		exit(1);
+	} 
 	string input_path = "/dev/input/";
 
     int fd = open((input_path + keyboard).c_str(), O_RDONLY | O_NONBLOCK); // Change this to your keyboard device
@@ -111,33 +153,14 @@ int main() {
     printf("Input device name: \"%s\"\n", libevdev_get_name(dev));
     printf("Recording keystrokes...\n");
 
-	int ticker = 0;
-
-    struct input_event ev;
-    while (1) {
-        int rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-        if (rc == 0 && ev.type == EV_KEY) {
-            if (ev.value == 1) { // key press
-                // printf("Key %d pressed\n", ev.code);
-				if(ev.code >= occ.size()){
-					occ.resize(ev.code);
-				}
-				occ[ev.code]++;
-				// print_occ(occ);
-            }
-        }
-
-		if(ticker == FLUSH_TICKS){
-			dump_to_csv(occ, csv_filename);
-			ticker = 0;
-		}
-		ticker++;
-		
-        usleep(EVENT_INTERVAL);
-    }
+	thread _capture(capture, dev);
+	thread _exporter(exporter, csv_filename);
+	_capture.join();
+	_exporter.join();
 
     libevdev_free(dev);
     close(fd);
+
     return 0;
 }
 
