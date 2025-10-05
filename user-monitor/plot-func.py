@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import unicodedata 
 from evdev import ecodes 
 
+# Character log file 
+clog_file = "data/characters.log"
+fchar_log_file = "data/formatted_char.log"
+
 # Read the CSV file
 df = pd.read_csv("data/keystrokes.csv")
 
@@ -24,6 +28,18 @@ def convert(key):
     elif c.isspace():
         c = 'Space'
     return c 
+
+def read_char_log():
+    formatted_cline = []
+    with open(clog_file, 'r') as cline:
+        cline = [int(s.strip()) for s in cline.readline()[:-1].split(",")]
+        for c in cline:
+            pc = convert(c)
+            formatted_cline.append(pc)
+
+    if formatted_cline:
+        with open(fchar_log_file, 'w') as fchar:
+            fchar.write(','.join(formatted_cline))
 
 def gen_text():
     global df 
@@ -52,19 +68,20 @@ def gen_plot():
     #plt.show()
 
 n = 50
-print(df.shape[0])
 df["char"] = df["key"].apply(lambda k : convert(k))
 top_n = min(n, df.shape[0]) if n > 0 else df.shape[0]
-print(df[df["count"] > 0])
-print(df.head(top_n))
+
+#print(df[df["count"] > 0])
+#print(df.head(top_n))
 # Sort descending by count
 df = df.sort_values("count", ascending=False)
 
 # print(df["char"].value_counts())
 df = df.head(top_n)
 df = df.reset_index(drop=True)
-print(df.shape)
-print(df)
+#print(df.shape)
+#print(df)
 
 gen_plot()
 gen_text()
+# read_char_log()

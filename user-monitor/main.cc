@@ -13,25 +13,30 @@
 #include <cstdint>
 #include <mutex>
 #include <thread>
+#include <cstdint>
 #include <chrono>
 
 #define FLUSH_TICKS 50
-#define EVENT_INTERVAL 50
+#define EVENT_INTERVAL 25
 #define nl '\n'
 #define newline cout << nl;
 
 using namespace std;
 mutex mtx;
+uint64_t start_time;
 vector<int> occ;
+vector<int> char_log;
 
-string get_time()
+#define LOGFILE "data/characters.log"
+
+uint64_t get_time()
 {
 	time_t result = time(nullptr);
-	string unix_time = asctime(localtime(&result));
-	return unix_time;
+	//string unix_time = asctime(localtime(&result));
+	return result;
 }
 
-void read_csv(string filename)
+void read_csv(string& filename, string& time_file)
 {
 	vector<pair<int, int>> data;
     ifstream file(filename);
@@ -41,14 +46,14 @@ void read_csv(string filename)
         return;
     }
 
+	int index = 0;
 	int maxkey = 0;
     string line;
 	getline(file, line);
     while (getline(file, line)) {
-        pair<int, int> row;
         stringstream ss(line);
         string cell;
-
+        pair<int, int> row;
         if (getline(ss, cell, ',')) {
             row.first = stoi(cell);
         }
@@ -56,7 +61,6 @@ void read_csv(string filename)
             row.second = stoi(cell);
         }
 		maxkey = max(maxkey, row.first);
-
         data.push_back(row);
     }
 	occ.resize(maxkey + 1, 0);
@@ -67,9 +71,20 @@ void read_csv(string filename)
 	}
 
     file.close();
+
+	// Get start_time 
+	file.open(time_file);
+	if (getline(file, line)){
+		stringstream ss(line);
+		string cell;
+		if (getline(ss, cell, ',')) {
+			start_time = stoull(cell);
+		}
+	}
+	file.close();
 }
 
-void dump_to_csv(string& filename)
+void dump_to_csv(string& filename, string& start_end_file)
 {
 	ofstream f;
 	f.open(filename);
@@ -80,6 +95,16 @@ void dump_to_csv(string& filename)
 		}
 	}
 	f.close();
+	f.open(start_end_file);
+	uint64_t end_time = get_time();
+	f << start_time << "," << end_time;
+	f.close();
+	f.open(LOGFILE, std::ios::app);
+	for(int i = 0; i < char_log.size(); i++){
+		f << char_log[i] << ",";
+	}
+	f.close();
+	char_log.clear(); // flush char log vector 
 }
 
 void print_occ()
@@ -100,12 +125,13 @@ void capture(struct libevdev* dev)
         if (rc == 0 && ev.type == EV_KEY) {
             if (ev.value == 1) { // key press
                 // printf("Key %d pressed\n", ev.code);
-				cout << "ev code: " << ev.code << nl;
+				// cout << "ev code: " << ev.code << nl;
 				lock_guard<mutex> lock(mtx);
 				if(ev.code >= occ.size()){
 					occ.resize(ev.code + 1);
 				}
 				occ[ev.code]++;
+				char_log.push_back(ev.code);
             }
         }
 
@@ -113,20 +139,22 @@ void capture(struct libevdev* dev)
     }
 }
 
-void exporter(string filename)
+void exporter(string key_filename, string time_filename)
 {
     while (true) {
         this_thread::sleep_for(chrono::seconds(5));
         lock_guard<mutex> lock(mtx);
-		print_occ();
-        dump_to_csv(filename);
+		// print_occ();
+        dump_to_csv(key_filename, time_filename);
     }
 }
 
 int main() {
 
 	string csv_filename = "data/keystrokes.csv";
-	read_csv(csv_filename);
+	string time_filename = "data/time_start_end.txt";
+
+	read_csv(csv_filename, time_filename);
 	cout << "Occ size: " << occ.size() << nl;
 
     struct libevdev *dev = NULL;
@@ -154,7 +182,7 @@ int main() {
     printf("Recording keystrokes...\n");
 
 	thread _capture(capture, dev);
-	thread _exporter(exporter, csv_filename);
+	thread _exporter(exporter, csv_filename, time_filename);
 	_capture.join();
 	_exporter.join();
 

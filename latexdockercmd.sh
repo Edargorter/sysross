@@ -1,3 +1,6 @@
 #!/bin/sh
+
+# See https://hub.docker.com/r/blang/latex
+
 IMAGE=blang/latex:ubuntu
 exec docker run --rm -i --user="$(id -u):$(id -g)" --net=none -v "$PWD":/data "$IMAGE" "$@"
