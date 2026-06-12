@@ -2,25 +2,33 @@ syntax on
 set title
 set number
 set backspace=indent,eol,start
-filetype plugin indent on
+
+" filetype plugin indent on
+set directory=/tmp//
+set backupdir=/tmp//
+set undodir=/tmp//
+
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set noexpandtab
-set background=dark
-set t_Co=256
-highlight Comment ctermfg=green
-set hlsearch
-set ruler
-set ai
-set paste
 set autoindent
 set linebreak
-nmap j gj
-nmap k gk
-vmap j gj
-vmap k gk
-nmap $ g$
-vmap $ g$
-nmap 0 g0
-vmap 0 g0
+
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
+
+set hlsearch
+set ruler
+set t_Co=256
+highlight Comment ctermfg=green
+
+set nopaste
+
+set noswapfile
+set noundofile
+set nobackup
+
+set nofsync
