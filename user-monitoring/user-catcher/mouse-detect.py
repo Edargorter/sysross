@@ -37,6 +37,7 @@ def detect(stop_event):
             break
 
 if __name__ == "__main__":
+    print("waiting...")
     stop_event = threading.Event()
     t_thread = threading.Thread(target=detect, args=(stop_event,))
     t_thread.start()

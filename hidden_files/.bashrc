@@ -4,8 +4,8 @@
 # for examples 
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+*i*) ;;
+*) return;;
 esac
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -32,57 +32,57 @@ shopt -s checkwinsize
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+debian_chroot=$(cat /etc/debian_chroot)
+	fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
+	case "$TERM" in
+	xterm-color|*-256color) color_prompt=yes;;
+	esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
 #force_color_prompt=yes
 
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
+	if [ -n "$force_color_prompt" ]; then
+	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+# We have color support; assume it's compliant with Ecma-48
+# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+# a case would tend to support setf rather than setaf.)
 	color_prompt=yes
-    else
+	else
 	color_prompt=
-    fi
-fi
+	fi
+	fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
+	if [ "$color_prompt" = yes ]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	else
+	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+	fi
+	unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+	case "$TERM" in
+	xterm*|rxvt*)
+	PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+	;;
+	*)
+	;;
+	esac
 
 # enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+	if [ -x /usr/bin/dircolors ]; then
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias ls='ls --color=auto'
+#alias dir='dir --color=auto'
+#alias vdir='vdir --color=auto'
 
-    #alias grep='grep --color=auto'
-    #alias fgrep='fgrep --color=auto'
-    #alias egrep='egrep --color=auto'
-fi
+#alias grep='grep --color=auto'
+#alias fgrep='fgrep --color=auto'
+#alias egrep='egrep --color=auto'
+	fi
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -97,103 +97,103 @@ fi
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+	if [ -f ~/.bash_aliases ]; then
+	. ~/.bash_aliases
+	fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+	if ! shopt -oq posix; then
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+	. /usr/share/bash-completion/bash_completion
+	elif [ -f /etc/bash_completion ]; then
+	. /etc/bash_completion
+	fi
+	fi
 
 
-if [ $(which nautilus) ]; then
-    FM="nautilus"
-elif [ $(which thunar) ]; then
-    FM="thunar"
-elif [ $(which xdg-open) ]; then
+	if [ $(which nautilus) ]; then
+	FM="nautilus"
+	elif [ $(which thunar) ]; then
+	FM="thunar"
+	elif [ $(which xdg-open) ]; then
 	FM="open"
-elif [ $(uname) == Darwin ]; then
+	elif [ $(uname) == Darwin ]; then
 	FM="open"
-else
-    FM=""
-fi
+	else
+	FM=""
+	fi
 
-if [ $FM != "" ]; then
-    alias fop="$FM . &"
-fi  
-    
+	if [ $FM != "" ]; then
+	alias fop="$FM . &"
+	fi  
+
 #Editors 
-export EDITOR='vim'
-export VISUAL='vim'
+	export EDITOR='vim'
+	export VISUAL='vim'
 
 #Aliases
-alias fop="$FM . &"
-alias sop="systemctl poweroff"
-alias rop="systemctl reboot"
-alias slp="systemctl suspend"
-alias own="sudo chown -R $(whoami) *"
-alias copy="xclip -sel clip"
-alias paste="xclip -sel clip -o"
-alias wttr="curl http://wttr.in/; date"
-alias vi="vim"
+	alias fop="$FM . &"
+	alias sop="systemctl poweroff"
+	alias rop="systemctl reboot"
+	alias slp="systemctl suspend"
+	alias own="sudo chown -R $(whoami) *"
+	alias copy="xclip -sel clip"
+	alias paste="xclip -sel clip -o"
+	alias wttr="curl http://wttr.in/; date"
+	alias vi="vim"
 
 #Python -> Python3
 #alias python="python3"
 
 #Prompt
-export PS1="\[\e[0;92m\]\u:\[\e[33m\]\W \$ \[\e[0m\]"
-export something;
+	export PS1="\[\e[0;92m\]\u:\[\e[33m\]\W \$ \[\e[0m\]"
+	export something;
 #export PS1='\u@\h:$(pwd | rev | cut -d '/' -f 1 | rev)$ '
 
 #ID
-alias macaddr="sudo head /dev/urandom | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4:\5:\6/'"
+	alias macaddr="sudo head /dev/urandom | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4:\5:\6/'"
 
 #Display
-display_resolution="1600x1200"
-alias disp="xrandr -s ${display_resolution}"
+	display_resolution="1600x1200"
+	alias disp="xrandr -s ${display_resolution}"
 
-function progress_bar {
-	if [ -z "$something" ]; then
+	function progress_bar {
+		if [ -z "$something" ]; then
 
-		### Cool Progress bar ###
+### Cool Progress bar ###
 
-		echo -e "Initialising warp drive ... \n"
+			echo -e "Initialising warp drive ... \n"
 
-		MAX=50
+				MAX=50
 
-		for (( i=1; i<=$MAX; i++ )); do
-			sleep 0.05
-			for (( j=1; j<=$i; j++ )); do
-				echo -n "#"
-			done
-			for (( j=1; j<=$(( 50 - $i )); j++)); do
-				echo -n " ";
-			done
-			echo -ne "  Progress: %$(( (100 * $i)/$MAX ))\r"
+				for (( i=1; i<=$MAX; i++ )); do
+					sleep 0.05
+						for (( j=1; j<=$i; j++ )); do
+							echo -n "#"
+								done
+								for (( j=1; j<=$(( 50 - $i )); j++)); do
+									echo -n " ";
 		done
+			echo -ne "  Progress: %$(( (100 * $i)/$MAX ))\r"
+			done
 
-		echo -e "\nEngaged."
-		sleep 0.5
-		echo ""
-		clear
-		uname -a
-		ip a | grep inet
+			echo -e "\nEngaged."
+			sleep 0.5
+			echo ""
+			clear
+			uname -a
+			ip a | grep inet
 
-		#Initial greeting
-		if [ $(which cowsay) ]; then
-			cowsay Live long and prosper, $(whoami)
+#Initial greeting
+			if [ $(which cowsay) ]; then
+				cowsay Live long and prosper, $(whoami)
+					fi
+
+					something="set";
 		fi
-
-		something="set";
-	fi
-}
+	}
 
 #progress_bar
 
@@ -212,9 +212,9 @@ export MAMBA_EXE='$HOME/projects/bin/micromamba';
 export MAMBA_ROOT_PREFIX='$HOME/micromamba';
 __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
+eval "$__mamba_setup"
 else
-    alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
+alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
 fi
 unset __mamba_setup
 alias conda=micromamba

@@ -9,11 +9,12 @@ set backupdir=/tmp//
 set undodir=/tmp//
 
 set tabstop=4
-set softtabstop=4
 set shiftwidth=4
-set noexpandtab
+set expandtab
+" set softtabstop=4
+" set noexpandtab
 set autoindent
-set linebreak
+" set linebreak
 
 nnoremap j gj
 nnoremap k gk
@@ -24,8 +25,6 @@ set hlsearch
 set ruler
 set t_Co=256
 highlight Comment ctermfg=green
-
-set nopaste
 
 set noswapfile
 set noundofile
